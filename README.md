@@ -31,7 +31,13 @@ Clone or download this repository, open a terminal in the project folder, and in
 npm install
 ```
 
-This downloads Electron and Electron Packager automatically from the dependencies listed in `package.json`. You do not need to upload or manually copy the `node_modules` folder.
+This installs Electron and Electron Packager automatically from the dependencies listed in `package.json`. If you prefer to install them explicitly, run:
+
+```powershell
+npm install --save-dev electron electron-packager
+```
+
+You do not need to upload or manually copy the `node_modules` folder.
 
 ## How to Run
 After installation, double-click `run.bat` on Windows or run:
