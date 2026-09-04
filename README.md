@@ -20,8 +20,27 @@ A standalone, real-time 2D & 1D physics simulation desktop software built with E
   - Dynamic trajectory plot ($y$ vs $x$)
   - Export trajectory simulation data to CSV
 
+## Requirements
+- [Node.js](https://nodejs.org/) 18 or newer (npm is included with Node.js)
+- Windows, macOS, or Linux for development
+
+## Installation
+Clone or download this repository, open a terminal in the project folder, and install the required modules:
+
+```powershell
+npm install
+```
+
+This downloads Electron and Electron Packager automatically from the dependencies listed in `package.json`. You do not need to upload or manually copy the `node_modules` folder.
+
 ## How to Run
-Double-click `run.bat` or run:
+After installation, double-click `run.bat` on Windows or run:
 ```powershell
 npm start
+```
+
+To create a Windows packaged application, run:
+
+```powershell
+npm run package-win
 ```
