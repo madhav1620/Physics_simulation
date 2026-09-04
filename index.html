@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinematics & Projectile Motion</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Minimalist Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 3a9 9 0 0 1 9 9"/>
+          <path d="M12 12l4.5 -4.5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">Kinematics & Projectile Motion</div>
+        <div class="brand-subtitle">Precision Desktop Physics Simulation</div>
+      </div>
+    </div>
+
+    <div class="header-status">
+      <div class="pulse-dot"></div>
+      <span>Engine Active (60 FPS)</span>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="app-container">
+    <!-- Left: Controls Panel -->
+    <aside class="panel controls-panel">
+      <div class="panel-header">
+        <span>SIMULATION PARAMETERS</span>
+      </div>
+      <div class="panel-content">
+        <!-- Mode Switcher -->
+        <div class="mode-toggle">
+          <button id="mode2dBtn" class="mode-btn active">2D Projectile</button>
+          <button id="mode1dBtn" class="mode-btn">1D Free Fall</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button id="launchBtn" class="btn-primary">
+            <svg id="launchIcon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5,3 19,12 5,21"/>
+            </svg>
+            <span id="launchText">LAUNCH</span>
+          </button>
+          <button id="resetBtn" class="btn-icon" title="Reset Simulation">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+          <button id="exportBtn" class="btn-icon" title="Export Trajectory CSV">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Initial Speed v0 -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>Initial Velocity (v₀)</span>
+            <span id="v0Val" class="control-val">25.0 m/s</span>
+          </div>
+          <input type="range" id="v0Slider" min="0" max="80" step="1" value="25">
+        </div>
+
+        <!-- Launch Angle (2D only) -->
+        <div class="control-group" id="angleGroup">
+          <div class="control-label">
+            <span>Launch Angle (θ)</span>
+            <span id="angleVal" class="control-val">45°</span>
+          </div>
+          <input type="range" id="angleSlider" min="0" max="90" step="1" value="45">
+        </div>
+
+        <!-- Initial Height h0 -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>Initial Height (h₀)</span>
+            <span id="h0Val" class="control-val">0.0 m</span>
+          </div>
+          <input type="range" id="h0Slider" min="0" max="60" step="1" value="0">
+        </div>
+
+        <!-- Bounce / Restitution Elasticity -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>Ground Elasticity (e)</span>
+            <span id="elasticityVal" class="control-val">0.75 (Rubber)</span>
+          </div>
+          <div class="preset-grid">
+            <button class="preset-btn" data-e="0.10">Clay (0.1)</button>
+            <button class="preset-btn" data-e="0.60">Wood (0.6)</button>
+            <button class="preset-btn active" data-e="0.75">Rubber (0.75)</button>
+            <button class="preset-btn" data-e="0.95">Super (0.95)</button>
+          </div>
+          <input type="range" id="elasticitySlider" min="0" max="1" step="0.05" value="0.75">
+        </div>
+
+        <!-- Gravity -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>Gravity (g)</span>
+            <span id="gVal" class="control-val">9.81 m/s²</span>
+          </div>
+          <div class="preset-grid">
+            <button class="preset-btn active" data-g="9.81">Earth</button>
+            <button class="preset-btn" data-g="1.62">Moon</button>
+            <button class="preset-btn" data-g="3.72">Mars</button>
+            <button class="preset-btn" data-g="24.79">Jupiter</button>
+          </div>
+          <input type="range" id="gSlider" min="0" max="30" step="0.1" value="9.81">
+        </div>
+
+        <!-- Air Resistance -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>Air Resistance (k)</span>
+            <span id="dragVal" class="control-val">Vacuum (0.00)</span>
+          </div>
+          <input type="range" id="dragSlider" min="0" max="0.15" step="0.005" value="0">
+        </div>
+
+        <!-- Visual Overlays -->
+        <div class="control-group" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+          <span style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">Visual Overlays</span>
+          <label class="checkbox-label" style="margin-top: 4px;">
+            <input type="checkbox" id="showPrediction" checked>
+            <span>Theoretical Trajectory (Ideal Arc)</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="showTrail" checked>
+            <span>Fading Particle Ribbon Trail</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="showVectors" checked>
+            <span>Velocity Vector Indicator</span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center: Interactive Simulation Canvas -->
+    <main class="canvas-container" id="canvasWrap">
+      <canvas id="simCanvas"></canvas>
+    </main>
+
+    <!-- Right: Analytics & Telemetry -->
+    <aside class="panel analytics-panel">
+      <div class="panel-header">
+        <span>TELEMETRY & ENERGY</span>
+      </div>
+      <div class="panel-content">
+        <!-- Quick Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">Peak Height</div>
+            <div class="stat-value"><span id="statMaxH">0.00</span> <span class="stat-unit">m</span></div>
+            <div class="stat-sub">Ideal: <span id="statIdealH">0.0</span> m</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Total Distance</div>
+            <div class="stat-value"><span id="statRange">0.00</span> <span class="stat-unit">m</span></div>
+            <div class="stat-sub">Bounces: <span id="statBounces">0</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Flight Time</div>
+            <div class="stat-value"><span id="statTime">0.00</span> <span class="stat-unit">s</span></div>
+            <div class="stat-sub">Est. 1st: <span id="statIdealT">0.0</span> s</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Current Speed</div>
+            <div class="stat-value"><span id="statSpeed">0.0</span> <span class="stat-unit">m/s</span></div>
+            <div class="stat-sub">v₀: <span id="statV0">25.0</span> m/s</div>
+          </div>
+        </div>
+
+        <!-- Mechanical Energy Conservation -->
+        <div class="energy-section">
+          <div class="energy-header">
+            <span style="color: #94a3b8; text-transform: uppercase; font-size: 9px;">Mechanical Energy (m = 1kg)</span>
+            <span id="totalEnergy" style="color: #4ade80; font-family: ui-monospace, monospace;">0.0 J</span>
+          </div>
+          <div class="energy-bar-wrap">
+            <div id="keBar" class="ke-bar" style="width: 50%;"></div>
+            <div id="peBar" class="pe-bar" style="width: 50%;"></div>
+          </div>
+          <div class="energy-legend">
+            <span><strong class="dot-ke">●</strong> KE: <span id="keVal">0.0</span> J</span>
+            <span><strong class="dot-pe">●</strong> PE: <span id="peVal">0.0</span> J</span>
+          </div>
+        </div>
+
+        <!-- Trajectory Height vs Distance Mini Chart WITH INTEGRATED BOUNCE COUNTER -->
+        <div class="chart-box">
+          <div class="chart-box-header">
+            <span class="chart-title">TRAJECTORY PROFILE</span>
+            <div class="graph-bounce-counter">
+              <span class="graph-bounce-label">BOUNCES:</span>
+              <span id="badgeBounceCount" class="graph-bounce-num">0</span>
+            </div>
+          </div>
+
+          <div class="chart-canvas-wrap">
+            <canvas id="analyticsCanvas"></canvas>
+          </div>
+
+          <div class="graph-bounce-footer">
+            <span id="badgeBounceStatus" class="graph-status-text">Ready to launch</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
